@@ -1,6 +1,6 @@
 package collections
 
-type Collection[T any] interface {
+type Collection[T comparable] interface {
 	Add(element T)
 	AddAll(elements Collection[T])
 	AddAllSlice(elements []T)
@@ -19,6 +19,7 @@ type Collection[T any] interface {
 	Clear()
 
 	Iterator() <-chan T
-	Equal(Collection[T]) bool
+	Equal(elements Collection[T]) bool
 	ForEach(do func(T))
+	String() string
 }

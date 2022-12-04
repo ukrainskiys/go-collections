@@ -1,10 +1,15 @@
 package collections
 
-type Set[T any] struct {
+import (
+	"fmt"
+	"strings"
+)
+
+type Set[T comparable] struct {
 	data map[any]interface{}
 }
 
-func NewSet[T any](elements ...T) *Set[T] {
+func NewSet[T comparable](elements ...T) *Set[T] {
 	set := &Set[T]{make(map[any]interface{})}
 	for _, el := range elements {
 		set.data[el] = nil
@@ -12,7 +17,7 @@ func NewSet[T any](elements ...T) *Set[T] {
 	return set
 }
 
-func NewSetOf[T any](elements Collection[T]) *Set[T] {
+func NewSetOf[T comparable](elements Collection[T]) *Set[T] {
 	set := &Set[T]{make(map[any]interface{})}
 	for el := range elements.Iterator() {
 		set.data[el] = nil
@@ -58,32 +63,35 @@ func (s *Set[T]) Remove(element T) bool {
 }
 
 func (s *Set[T]) RemoveAll(elements Collection[T]) bool {
+	modified := false
 	for el := range elements.Iterator() {
-		if !s.Remove(el) {
-			return false
+		if s.Remove(el) {
+			modified = true
 		}
 	}
-	return true
+	return modified
 }
 
 func (s *Set[T]) RemoveAllSlice(elements []T) bool {
+	modified := false
 	for _, e := range elements {
-		if !s.Remove(e) {
-			return false
+		if s.Remove(e) {
+			modified = true
 		}
 	}
-	return true
+	return modified
 }
 
 func (s *Set[T]) RemoveIf(predicate func(T) bool) bool {
+	modified := false
 	for key := range s.data {
 		if predicate(key.(T)) {
-			if !s.Remove(key.(T)) {
-				return false
+			if s.Remove(key.(T)) {
+				modified = true
 			}
 		}
 	}
-	return true
+	return modified
 }
 
 func (s *Set[T]) Add(element T) {
@@ -141,4 +149,12 @@ func (s *Set[T]) ForEach(do func(T)) {
 	for key := range s.data {
 		do(key.(T))
 	}
+}
+
+func (s *Set[T]) String() string {
+	var data []string
+	for el := range s.data {
+		data = append(data, fmt.Sprint(el))
+	}
+	return "Set=[" + strings.Join(data, ", ") + "]"
 }
