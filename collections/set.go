@@ -4,21 +4,17 @@ type Set[T any] struct {
 	data map[any]interface{}
 }
 
-func NewSet[T any]() *Set[T] {
-	return &Set[T]{make(map[any]interface{})}
-}
-
-func NewSetOf[T any](elements Collection[T]) *Set[T] {
-	set := NewSet[T]()
-	for el := range elements.Iterator() {
+func NewSet[T any](elements ...T) *Set[T] {
+	set := &Set[T]{make(map[any]interface{})}
+	for _, el := range elements {
 		set.data[el] = nil
 	}
 	return set
 }
 
-func NewSetOfSlice[T any](elements []T) *Set[T] {
-	set := NewSet[T]()
-	for _, el := range elements {
+func NewSetOf[T any](elements Collection[T]) *Set[T] {
+	set := &Set[T]{make(map[any]interface{})}
+	for el := range elements.Iterator() {
 		set.data[el] = nil
 	}
 	return set
