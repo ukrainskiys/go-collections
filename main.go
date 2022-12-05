@@ -33,6 +33,8 @@ func testSet() {
 		fmt.Println(i)
 	}
 
+	set.Equal(set2)
+
 	fmt.Println(set2)
 }
 
@@ -42,20 +44,20 @@ func testArray() {
 		testi int
 	}
 
-	ar := collections.NewArray[TEST](TEST{"1", 1}, TEST{"2", 2})
+	ar := collections.NewList[TEST](TEST{"1", 1}, TEST{"2", 2})
 	fmt.Println(ar.Contains(TEST{"1", 1}))
 
-	arr := collections.NewArray[int]()
+	arr := collections.NewList[int]()
 	arr.ForEach(print)
 	fmt.Println(arr.Size())
 
-	arr.AddAll(collections.NewArray[int](1, 2, 3, 4, 4, 4, 4))
+	arr.AddAll(collections.NewList[int](1, 2, 3, 4, 4, 4, 4))
 	arr.ForEach(print)
 	fmt.Println(arr.Size())
 
 	arr.AddAll(collections.NewSet[int](5, 10, 3, 4))
 
-	arr2 := collections.NewArrayOf[int](arr)
+	arr2 := collections.NewListOf[int](arr)
 	arr2.ForEach(print)
 	fmt.Println()
 
@@ -66,7 +68,26 @@ func testArray() {
 	fmt.Println(arr2)
 }
 
+func testQueue() {
+	q := collections.NewQueue[int](5, 4, 3, 2, 1)
+	fmt.Println(q.Peek())
+	fmt.Println(q.Pool())
+	fmt.Println(q)
+
+	q.Clear()
+	fmt.Println(q)
+
+	q.Offer(1)
+	q.Offer(1)
+	q.Offer(100)
+	q.Offer(1111)
+	q.Pool()
+	fmt.Println(q)
+
+}
+
 func main() {
+	testQueue()
 	//testSet()
-	testArray()
+	//testArray()
 }

@@ -19,7 +19,6 @@ type Collection[T comparable] interface {
 	Clear()
 
 	Iterator() <-chan T
-	Equal(elements Collection[T]) bool
 	ForEach(do func(T))
 	String() string
 }
