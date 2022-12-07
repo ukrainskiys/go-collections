@@ -138,14 +138,12 @@ func (s *HashSet[T]) Clear() {
 }
 
 func (s *HashSet[T]) Iterator() <-chan T {
-	pool := make(chan T)
+	pool := make(chan T, len(s.data))
+	defer close(pool)
 
-	go func() {
-		defer close(pool)
-		for key := range s.data {
-			pool <- key.(T)
-		}
-	}()
+	for key := range s.data {
+		pool <- key.(T)
+	}
 
 	return pool
 }

@@ -106,15 +106,8 @@ func (c *collectionWithSlice[T]) RemoveIf(predicate func(T) bool) bool {
 	c.mx.Lock()
 	defer c.mx.Unlock()
 	modified := false
-	var arr []T
 	for el := range c.Iterator() {
-		if predicate(el) {
-			arr = append(arr, el)
-		}
-	}
-
-	for _, val := range arr {
-		if c.Remove(val) {
+		if predicate(el) && c.Remove(el) {
 			modified = true
 		}
 	}
@@ -140,16 +133,14 @@ func (c *collectionWithSlice[T]) Clear() {
 }
 
 func (c *collectionWithSlice[T]) Iterator() <-chan T {
-	pool := make(chan T)
+	c.mx.RLock()
+	defer c.mx.RUnlock()
+	pool := make(chan T, len(*c.data))
+	defer close(pool)
 
-	go func() {
-		defer close(pool)
-		c.mx.RLock()
-		defer c.mx.RUnlock()
-		for _, val := range *c.data {
-			pool <- val
-		}
-	}()
+	for _, val := range *c.data {
+		pool <- val
+	}
 
 	return pool
 }
